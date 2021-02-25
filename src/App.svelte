@@ -2,7 +2,7 @@
 import { element } from './store'
 
 import ContentArray from './ContentArray.svelte'
-// import DataRepeater from './DataRepeater.svelte'
+import DataRepeater from './DataRepeater.svelte'
 // import Element from './Element.svelte'
 
 let contentArrayComponent
@@ -68,21 +68,21 @@ function updateWidth(val){
 				Text
 			</div>
 		</div>
-		<div class="controls">
+		<!-- <div class="controls">
 			width
 			<input type="text" value={width} on:input={updateWidth}>
-		</div>
+		</div> -->
 	</div>
 	<div class="content">
 		<div class="rect" bind:this={rect}/>
-		<!-- <DataRepeater let:val={val}>
+		<DataRepeater let:item={item}>
 				<div class="post">
 					<h3>
-						{val.title}
+						{item.title}
 					</h3>
-					<span>{val.author}</span>
+					<span>{item.author}</span>
 				</div>
-		</DataRepeater> -->
+		</DataRepeater>
 		{#if false}
 			<pre>
 				{ JSON.stringify(items, null, 4) }
