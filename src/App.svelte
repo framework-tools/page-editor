@@ -13,6 +13,8 @@ let root = {
 	content: []
 }
 
+
+
 let rect
 
 element.set([root, item => root = item])
@@ -24,7 +26,8 @@ element.subscribe(([element, updateElement]) => {
 
 function addItem(type){
 	let item = {
-		type
+		type,
+		style: {}
 	}
 
 	if(type !== 'text'){
@@ -50,10 +53,20 @@ function addItem(type){
 
 // $: { currentElement && updateRect() }
 
-$: width = currentElement?.el?.style.width || '100'
+x = {
+	type: 'doc',
+	content: [
+		{
+			type: 'p',
+			text: 'test'
+		}
+	]
+}
+
+$: width = currentElement?.el?.style.width.replace('px', '') || ''
 
 function updateWidth(val){
-	currentElement.style.width = val.target.value + 'px'
+	currentElement.el.style.width = val.target.value + 'px'
 	updateFn(currentElement)
 }
 
@@ -68,10 +81,11 @@ function updateWidth(val){
 				Text
 			</div>
 		</div>
-		<!-- <div class="controls">
+		
+		<div class="controls">
 			width
 			<input type="text" value={width} on:input={updateWidth}>
-		</div> -->
+		</div>
 	</div>
 	<div class="content">
 		<div class="rect" bind:this={rect}/>

@@ -8,11 +8,19 @@ export let parent
 $: item.parent = parent
 
 import { element } from './store'
+import { onMount } from 'svelte/internal'
 
 function click(){
 	element.set([item, updatedItem => item = updatedItem])
 }
 
+onMount(()=>{
+	item = item
+})
+
+// $: style = {
+// 	item
+// }
 $: empty = item.content.length === 0
 
 </script>
