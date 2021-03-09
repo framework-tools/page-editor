@@ -8,7 +8,7 @@ import DataRepeater from './DataRepeater.svelte'
 let contentArrayComponent
 let currentElement
 let updateFn
-
+ 
 let root = {
 	content: []
 }
@@ -52,16 +52,6 @@ function addItem(type){
 // }
 
 // $: { currentElement && updateRect() }
-
-x = {
-	type: 'doc',
-	content: [
-		{
-			type: 'p',
-			text: 'test'
-		}
-	]
-}
 
 $: width = currentElement?.el?.style.width.replace('px', '') || ''
 
