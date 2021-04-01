@@ -5,17 +5,14 @@
 
 	export let parent
 </script>
-{#each parent.content as item}
+{#each parent.children as item}
 	{#if item.type !== 'text'}
 		<Element
-			tag={item.type}
 			bind:item
-			bind:parent
 			/>
 	{:else}
 		<TextElement
 			bind:item
-			bind:parent
 			/>
 	{/if}
 {/each}

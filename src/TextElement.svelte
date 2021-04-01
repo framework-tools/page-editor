@@ -2,15 +2,17 @@
 <script>
     export let item
 
-
     $: empty = item.text === ''
 
 </script>
-<span
-    contenteditable="true"
-    bind:innerHTML={item.text}
-    class:placeholder={empty}
-    />
+{#if !empty}
+    {@html item.text}
+{:else}
+    <span
+        contenteditable="true"
+        class="placeholder"
+        />
+{/if}
 <style>
     .placeholder {
         opacity: 0.5;

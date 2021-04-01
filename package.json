@@ -19,7 +19,9 @@
   "dependencies": {
     "aphrodite": "^2.4.0",
     "aphrodite-jss": "^2.1.0",
+    "css-tree": "^1.1.2",
     "sirv-cli": "^1.0.0",
+    "svelte-material-icons": "^1.0.3",
     "svelte-preprocess": "^4.6.3"
   }
 }
