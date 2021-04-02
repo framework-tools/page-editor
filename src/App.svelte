@@ -1,35 +1,47 @@
-<script>
+<script lang="ts">
 import { element } from './store'
 import { getOffset } from './Selection'
 import ElementEditor from './ElementEditor.svelte'
 import { View } from './view'
-import { Doc } from './Node'
 import createRecursiveProxy from './recursiveProxy'
+import { Schema } from './editor/schema'
+import Stylesheet from './Stylesheet.svelte'
 
 
 import ContentArray from './ContentArray.svelte'
 import DataRepeater from './DataRepeater.svelte'
 import { onDestroy, onMount } from 'svelte';
 
+import Doc from './nodes/Doc'
+import Heading from './nodes/Heading'
+import Text from './nodes/Text';
+import DynamicBlock from './nodes/DynamicBlock';
+
+let schema = new Schema({
+	nodes: [
+		Doc,
+		DynamicBlock,
+		Heading,
+		Text
+	]
+})
+
 let currentNode
+let stylesList
 
 let offset = 0
 let view
 
-// onMount(() => {
-// 	let state = {
-// 		content: root
-// 	}
-// 	view = new View(doc, state)
-// })
-
-let stylesheet
-
 function updateOffset(){
-	offset = getOffset(doc, document.getSelection())
+	let selection = window.getSelection()
+	if(root.el.contains(selection.anchorNode)){
+		offset = getOffset(root.el, selection)
+		console.log(offset)
+	}
 }
 
 // onMount(()=>{
+// 	root.el.childNodes[0].innerHTML = `<p>test</p>abc<img>de<p>fg<img>hi</p>jk`
 // 	document.addEventListener('selectionchange', updateOffset)
 // })
 
@@ -39,58 +51,59 @@ function updateOffset(){
 
 
 
-let doc = Doc.fromJSON({
+let doc = Doc.fromJSON(schema, {
+	type: 'Doc',
 	props: {
 		classes: []
 	},
 	children: [
 		{
-			type: 'block',
+			type: 'Block',
 			props: {
 				tag: 'header',
 				classes: ['header']
 			},
 			children: [
-				// {
-				// 	type: 'text',
-				// 	text: 'this is a header'
-				// }
+				{
+					type: 'Text',
+					text: 'this is a header'
+				}
 			]
 		},
-		// {
-		// 	type: 'block',
-		// 	props: {
-		// 		tag: 'div',
-		// 		classes: ['inner-content']
-		// 	},
-		// 	children: [
-		// 		{
-		// 			type: 'block',
-		// 			props: {
-		// 				tag: 'p'
-		// 			},
-		// 			children: [
-		// 				{
-		// 					type: 'text',
-		// 					text: 'this is a paragraph'
-		// 				}
-		// 			]
-		// 		},
-		// 		{
-		// 			type: 'heading',
-		// 			props: {
-		// 				level: 1,
-		// 				classes: ['heading']
-		// 			},
-		// 			children: [
-		// 				{
-		// 					type: 'text',
-		// 					text: 'this is a heading'
-		// 				}
-		// 			]
-		// 		}
-		// 	]
-		// }
+		{
+			type: 'Block',
+			props: {
+				tag: 'div',
+				classes: ['inner-content']
+			},
+			children: [
+				{
+					type: 'Block',
+					props: {
+						tag: 'p'
+					},
+					children: [
+						{
+							type: 'Text',
+							text: 'this is a paragraph'
+						}
+					]
+				},
+				{
+					type: 'Heading',
+					props: {
+						level: 1,
+						classes: ['heading']
+					},
+					children: [
+						{
+							type: 'Text',
+							text: 'this is a heading'
+						}
+					]
+				}
+			]
+		}
 	]
 })
 
@@ -99,6 +112,10 @@ let root = createRecursiveProxy(doc, () => {
 	root = root
 	currentNode = currentNode
 })
+
+$: if(root.el) {
+	root.el.NodeView = root
+}
 
 
 element.set(root)
@@ -139,13 +156,13 @@ function updateSelection(){
 }
 
 
-onMount(()=>{
-	document.addEventListener('selectionchange', updateSelection)
-})
+// onMount(()=>{
+// 	document.addEventListener('selectionchange', updateSelection)
+// })
 
-onDestroy(() => {
-	document.removeEventListener('selectionchange', updateSelection)
-})
+// onDestroy(() => {
+// 	document.removeEventListener('selectionchange', updateSelection)
+// })
 
 // async function updateRect(){
 // 	if(currentElement?.el){
@@ -164,6 +181,7 @@ let rect
 
 
 </script>
+<Stylesheet bind:root bind:stylesList/>
 <div class="wrapper">
 	<div class="sidebar">
 		<div class="elements">
@@ -176,31 +194,16 @@ let rect
 		</div>
 	</div>
 	<div class="content">
-		{@html `<style>${stylesheet}</style>`}
 		<div class="rect" bind:this={rect}/>
-		<!-- <DataRepeater let:item={item}>
-				<div class="post">
-					<h3>
-						{item.title}
-					</h3>
-					<span>{item.author}</span>
-				</div>
-		</DataRepeater> -->
-		{#if false}
-			<pre>
-				{ JSON.stringify(items, null, 4) }
-				{ JSON.stringify(focusElement, null, 4)}
-			</pre>
-		{/if}
-		<div bind:this={root.el}>
+		<div class="root" bind:this={root.el} contenteditable="true">
 			<ContentArray
 				bind:parent={root}
 				/>
 		</div>
 	</div>
 	<div class="sidebar">
-		{#if currentNode}
-			<ElementEditor bind:stylesheet bind:root bind:currentNode/>
+		{#if currentNode && currentNode.classes }
+			<ElementEditor bind:stylesList bind:currentNode bind:schema/>
 		{/if}
 	</div>
 </div>
@@ -250,6 +253,10 @@ let rect
 		display: grid;
 		grid-template-columns: repeat(3, max-content);
 		grid-gap: 10px;
+	}
+
+	.root {
+		outline: none;
 	}
 
 </style>
