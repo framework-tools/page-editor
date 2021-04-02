@@ -5,63 +5,20 @@ import StyleDropdown from './StyleDropdown.svelte'
 import Close from 'svelte-material-icons/Close.svelte'
 import ChevronDown from 'svelte-material-icons/ChevronDown.svelte'
 import clickOutside from './clickOutside.js'
-import { Block, Heading } from './Node'
+import Block from './utils/Block'
 
-export let stylesheet = ''
-export let root
 export let currentNode
-
-$: if(stylesList) {
-    stylesheet = createStylesheet(getUsedStyles(root.children))
-}
+export let stylesList
+export let schema
 
 $: if(currentNode) {
     currentStyle = undefined
 }
 
-let stylesList = {
-	'header': `{
-    background: #111;
-    color: white;
-    width: 100%;
-    padding: 20px;
-    display: block;
-}`,
-	'inner-content': `{
-    padding-left: 20px;
-    padding-right: 20px;
-}`,
-	'heading': `{
-    border-bottom: 3px solid rgb(200, 20, 20);
-}`
-}
+
 
 $: ast = csstree.parse(`.header ${stylesList['header']}`)
 $: background = csstree.find(csstree.find(ast, node => node.property === 'background').value, node => (node.type !== 'Value') && node.value).value
-
-function createStylesheet(rules){
-	let stylesheet = ``
-	
-	rules.map(rule => stylesheet += `.${rule} ${stylesList[rule]}`)
-
-	return stylesheet
-}
-
-function getUsedStyles(children = []){
-	let styles = []
-	for(const node of children){
-		styles.push(...node.classes)
-		styles.push(...getUsedStyles(node.children))
-	}
-	return styles
-}
-
-function updateClass(){
-	if(!currentNode.attrs) currentNode.attrs = {}
-	if(!currentNode.attrs.classes) currentNode.attrs.classes = {}
-
-	currentNode.attrs.classes.push('header')
-}
 
 function updateBackground(e){
 	let backgroundProperty = csstree.find(ast, node => node.type === 'Declaration' && node.property === 'background')
@@ -87,8 +44,11 @@ function updateWidth(val){
 
 function changeType (type){
     if(type === 'heading'){
-        console.log(parent)
-        parent[index] = new Heading({})
+        let parent = currentNode.el.parentNode.NodeView
+        let index = parent.children.findIndex(node => node === currentNode)
+        currentNode = Heading.fromJSON(currentNode.toJSON())
+        parent.children[index] = currentNode
+        currentNode = currentNode
     } else {
         currentNode.props.tag = type
     }
@@ -98,6 +58,7 @@ function changeType (type){
 let currentStyle
 
 let tagDropdownToggled = false
+
 
 </script>
 
@@ -125,7 +86,7 @@ let tagDropdownToggled = false
     <div class="sidebar-seperator classes">
         <div class="sidebar-section">
             <span class="sidebar-section-name">Styles</span>
-            <StyleDropdown/>
+            <StyleDropdown bind:stylesList/>
         </div>
         {#each currentNode.classes as style}
             <div
@@ -159,9 +120,6 @@ let tagDropdownToggled = false
     <div class="sidebar-seperator">
         <div class="sidebar-section">
             <span class="sidebar-section-name">Styling</span>
-        </div>
-        <div class="icon" on:click={updateClass}>
-            Update Class
         </div>
         <div>Background</div>
         <input type="text" value={background} on:input={updateBackground}>

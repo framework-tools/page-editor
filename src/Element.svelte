@@ -15,7 +15,7 @@ function parents(node) {
 	}
 	return nodes
 }
-	
+
 function getCommonAncestor(node1, node2) {
 	var parents1 = parents(node1)
 	var parents2 = parents(node2)
@@ -45,17 +45,8 @@ function click(e){
 $: classes = item.classes.join(' ') ?? undefined
 $: empty = item.children.length === 0
 $: selected = item === currentItem
-//$: console.log(item, currentItem)
-// $: console.log('item', item.props)
+$: if(item.el) item.el.NodeView = item
 
-
-// element.subscribe(([value]) => {
-// 	currentItem = value
-// })
-
-let clientWidth
-
-$: console.log(clientWidth)
 
 </script>
 <svelte:element
@@ -63,8 +54,6 @@ $: console.log(clientWidth)
 	class={classes}
 	class:empty
 	class:builder-selected={selected}
-	contenteditable="true"
-	bind:innerHTML={clientWidth}
 	bind:this={item.el}
 	on:mousedown={click}
 	>

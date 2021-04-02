@@ -9,7 +9,6 @@
     {@html item.text}
 {:else}
     <span
-        contenteditable="true"
         class="placeholder"
         />
 {/if}

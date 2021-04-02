@@ -2,7 +2,6 @@
 import { element } from './store'
 import { getOffset } from './Selection'
 import ElementEditor from './ElementEditor.svelte'
-import { View } from './view'
 import createRecursiveProxy from './recursiveProxy'
 import { Schema } from './editor/schema'
 import Stylesheet from './Stylesheet.svelte'
