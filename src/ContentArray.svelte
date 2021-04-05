@@ -1,5 +1,4 @@
 <script>
-	import Element from './Element.svelte'
 	import { tick } from 'svelte'
 
 	function escapeHtml(unsafe) {
