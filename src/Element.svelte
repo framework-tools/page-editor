@@ -50,6 +50,8 @@ $: empty = node.children.length === 0
 $: selected = node === currentNode
 $: if(parentViewDesc) nodeView = nodeView
 
+let el
+
 let nodeView = new NodeViewDesc(parentViewDesc, [], null, node, parentViewDesc.view)
 
 </script>

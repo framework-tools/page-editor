@@ -9,8 +9,6 @@ export let parentViewDesc
 const item = getContext(node.props.context);
 let currentNode
 
-console.log(item[node.props.key])
-
 element.subscribe(updatedItem => currentNode = updatedItem)
 
 $: classes = node.classes.join(' ') ?? undefined

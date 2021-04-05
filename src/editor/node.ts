@@ -22,10 +22,6 @@ export class Node {
         this.children = children
     }
 
-    get nodeSize() {
-        return this.isLeaf ? 1 : 2 + this.children.size
-    }
-
     // True when this is a block (non-inline node)
     get isBlock() { return this.type.isBlock }
 

@@ -4,9 +4,13 @@ import ContentArray from './ContentArray.svelte'
 import { onMount, onDestroy } from 'svelte'
 import { selectionFromDOM } from './view/Selection';
 import { View } from './view/View';
+import { ResolvedPos } from './view/ResolvedPos'
 
 export let root
 export let currentNode
+
+
+console.log(ResolvedPos.resolve(root, 18).node().tag)
 
 let rect
 
@@ -19,8 +23,6 @@ $: if (root) view = view
 function updateSelection(){
 	let sel = window.getSelection()
     let offset = selectionFromDOM(view)
-
-    console.log(offset)
 }
 
 

@@ -24,8 +24,10 @@ export function selectionFromDOM (view: View) {
     return $selection
 }
 
+
+
 class Selection {
     constructor(){
-
+        
     }
 }
