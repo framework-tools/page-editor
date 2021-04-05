@@ -61,6 +61,10 @@ export class Node {
         return new this(type, type.computeProps(json.props), children) as T
     }
 
+    get size () {
+        return this.isLeaf ? 1 : 2 + this.children.size
+    }
+
 }
 
 export class TextNode extends Node {
@@ -70,6 +74,10 @@ export class TextNode extends Node {
         super(type, null, null)
 
         this.text = content
+    }
+
+    get size() {
+        return this.text.length
     }
 
     withText(text) {

@@ -2,11 +2,14 @@
 import ContentArray from './ContentArray.svelte'
 import { tick } from 'svelte'
 import { element } from './store'
+import { NodeViewDesc } from './view/ViewDescription'
 
-export let item
-let currentItem
-element.subscribe(updatedItem => currentItem = updatedItem)
-$: tag = item.tag
+export let node
+export let parentViewDesc
+
+let currentNode
+element.subscribe(updatedItem => currentNode = updatedItem)
+$: tag = node.tag
 
 function parents(node) {
 	var nodes = [node]
@@ -28,25 +31,26 @@ function getCommonAncestor(node1, node2) {
 }
 
 function click(e){
-	let commonAncestor = getCommonAncestor(item.el, currentItem.el)
+	let commonAncestor = getCommonAncestor(node.el, currentNode.el)
 
 	if(
-		item.el.parentElement === currentItem.el
-		|| item.el === currentItem.el
-		|| commonAncestor === item.el.parentElement
-		|| commonAncestor === item.el
+		node.el.parentElement === currentNode.el
+		|| node.el === currentNode.el
+		|| commonAncestor === node.el.parentElement
+		|| commonAncestor === node.el
 	){
-		element.set(item)
+		element.set(node)
 		return e.stopPropagation()
 	}
 	e.preventDefault()
 }
 
-$: classes = item.classes.join(' ') ?? undefined
-$: empty = item.children.length === 0
-$: selected = item === currentItem
-$: if(item.el) item.el.NodeView = item
+$: classes = node.classes.join(' ') ?? undefined
+$: empty = node.children.length === 0
+$: selected = node === currentNode
+$: if(parentViewDesc) nodeView = nodeView
 
+let nodeView = new NodeViewDesc(parentViewDesc, [], null, node, parentViewDesc.view)
 
 </script>
 <svelte:element
@@ -54,11 +58,10 @@ $: if(item.el) item.el.NodeView = item
 	class={classes}
 	class:empty
 	class:builder-selected={selected}
-	bind:this={item.el}
-	on:mousedown={click}
+	bind:this={nodeView.el}
 	>
 	<ContentArray
-		bind:parent={item}/>
+		bind:parentViewDesc={nodeView}/>
 </svelte:element>
 <style>
 	:global(.empty) {

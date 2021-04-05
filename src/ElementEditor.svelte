@@ -15,8 +15,6 @@ $: if(currentNode) {
     currentStyle = undefined
 }
 
-
-
 $: ast = csstree.parse(`.header ${stylesList['header']}`)
 $: background = csstree.find(csstree.find(ast, node => node.property === 'background').value, node => (node.type !== 'Value') && node.value).value
 

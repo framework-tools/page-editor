@@ -3,10 +3,10 @@ let ignoredProps = ['el', 'type']
 
 export default function createRecursiveProxy(object, update) {
     if(Array.isArray(object)){
-        for(const index of object){
+        for(const index in object){
             let value = object[index]
             if(value && typeof value === 'object' && !value.isProxy){
-                object[index] = createRecursiveProxy(object[index], update)
+                object[index] = createRecursiveProxy(value, update)
             }
         }
     } else {

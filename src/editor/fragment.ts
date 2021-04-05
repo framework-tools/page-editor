@@ -8,8 +8,10 @@ export class Fragment extends Array<Node> {
     constructor(...children: Node[]) {
         super(...children)
 
+        this.size = 0
+        
         for (let i = 0; i < children.length; i++)
-            this.size += children[i].nodeSize
+            this.size += children[i].size
     }
 
     toJSON() {

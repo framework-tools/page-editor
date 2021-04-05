@@ -1,15 +1,10 @@
 <script lang="ts">
 import { element } from './store'
-import { getOffset } from './Selection'
 import ElementEditor from './ElementEditor.svelte'
 import createRecursiveProxy from './recursiveProxy'
 import { Schema } from './editor/schema'
 import Stylesheet from './Stylesheet.svelte'
-
-
-import ContentArray from './ContentArray.svelte'
-import DataRepeater from './DataRepeater.svelte'
-import { onDestroy, onMount } from 'svelte';
+import View from './View.svelte'
 
 import Doc from './nodes/Doc'
 import Heading from './nodes/Heading'
@@ -27,28 +22,6 @@ let schema = new Schema({
 
 let currentNode
 let stylesList
-
-let offset = 0
-let view
-
-function updateOffset(){
-	let selection = window.getSelection()
-	if(root.el.contains(selection.anchorNode)){
-		offset = getOffset(root.el, selection)
-		console.log(offset)
-	}
-}
-
-// onMount(()=>{
-// 	root.el.childNodes[0].innerHTML = `<p>test</p>abc<img>de<p>fg<img>hi</p>jk`
-// 	document.addEventListener('selectionchange', updateOffset)
-// })
-
-// onDestroy(() => {
-// 	document.removeEventListener('selectionchange', updateOffset)
-// })
-
-
 
 let doc = Doc.fromJSON(schema, {
 	type: 'Doc',
@@ -112,11 +85,6 @@ let root = createRecursiveProxy(doc, () => {
 	currentNode = currentNode
 })
 
-$: if(root.el) {
-	root.el.NodeView = root
-}
-
-
 element.set(root)
 element.subscribe(updatedNode => currentNode = updatedNode)
 
@@ -129,58 +97,14 @@ function addItem(type){
 	}
 
 	if(type !== 'text'){
-		item.content = []
+		item.children = []
 	}
 
 	currentNode.content = [...currentNode.content, item]
 	currentNode = currentNode
 }
 
-function createSelectionPath(el){
-	let currentEl = el
-	
-	let path = []
-
-	while(currentEl !== root.el){
-		path.unshift(currentEl)
-		currentEl = currentEl.parentNode
-	}
-
-	return path
-}
-
-function updateSelection(){
-	let sel = window.getSelection()
-	console.log(createSelectionPath(sel.anchorNode))
-}
-
-
-// onMount(()=>{
-// 	document.addEventListener('selectionchange', updateSelection)
-// })
-
-// onDestroy(() => {
-// 	document.removeEventListener('selectionchange', updateSelection)
-// })
-
-// async function updateRect(){
-// 	if(currentElement?.el){
-// 		await tick()
-// 		let focusRect = focusElement.el.getBoundingClientRect()
-// 		rect.style.top = focusRect.top + 'px'
-// 		rect.style.left = focusRect.left + 'px'
-// 		rect.style.width = focusRect.width  + 'px'
-// 		rect.style.height = '1px'
-// 	}
-// }
-
-let rect
-// $: { currentElement && updateRect() }
-
-
-
 </script>
-<Stylesheet bind:root bind:stylesList/>
 <div class="wrapper">
 	<div class="sidebar">
 		<div class="elements">
@@ -192,14 +116,8 @@ let rect
 			</div>
 		</div>
 	</div>
-	<div class="content">
-		<div class="rect" bind:this={rect}/>
-		<div class="root" bind:this={root.el} contenteditable="true">
-			<ContentArray
-				bind:parent={root}
-				/>
-		</div>
-	</div>
+	<Stylesheet bind:root bind:stylesList/>
+	<View bind:root bind:currentNode/>
 	<div class="sidebar">
 		{#if currentNode && currentNode.classes }
 			<ElementEditor bind:stylesList bind:currentNode bind:schema/>
@@ -226,11 +144,6 @@ let rect
 		background: #E5E5E5;
 		font-family: 'Roboto', sans-serif;
 	}
-
-	.rect {
-		background: purple;
-		position: absolute;
-	}
 	
 	.wrapper {
 		display: grid;
@@ -254,9 +167,7 @@ let rect
 		grid-gap: 10px;
 	}
 
-	.root {
-		outline: none;
-	}
+
 
 </style>
 <svelte:head>
