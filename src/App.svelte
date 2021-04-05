@@ -10,13 +10,17 @@ import Doc from './nodes/Doc'
 import Heading from './nodes/Heading'
 import Text from './nodes/Text';
 import DynamicBlock from './nodes/DynamicBlock';
+import Repeater from './nodes/Repeater';
+import DynamicData from './nodes/DynamicData';
 
 let schema = new Schema({
 	nodes: [
 		Doc,
 		DynamicBlock,
 		Heading,
-		Text
+		DynamicData,
+		Text,
+		Repeater
 	]
 })
 
@@ -39,6 +43,29 @@ let doc = Doc.fromJSON(schema, {
 				{
 					type: 'Text',
 					text: 'this is a header'
+				}
+			]
+		},
+		{
+			type: 'Repeater',
+			props: {
+				tag: 'div',
+				classes: ['repeater']
+			},
+			children: [
+				{
+					type: 'DynamicData',
+					props: {
+						context: 'item',
+						key: 'title'
+					}
+				},
+				{
+					type: 'DynamicData',
+					props: {
+						context: 'item',
+						key: 'author'
+					}
 				}
 			]
 		},

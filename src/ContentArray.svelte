@@ -22,8 +22,9 @@
 </script>
 {#each parentViewDesc.node.children as node, i}
 	{#if !node.isText }
-		<Element
-			bind:node={node}
+		<svelte:component
+			this={node.component}
+			bind:node
 			bind:parentViewDesc/>
 	{:else}
 		{@html `<!--${i}-->${escapeHtml(node.text)}`}
