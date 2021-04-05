@@ -1,0 +1,5 @@
+
+class ResolvedPos {
+    pos: number
+    
+}
