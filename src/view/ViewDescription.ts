@@ -1,7 +1,7 @@
 import type { Node as EditorNode } from '../editor/node'
 import type { View } from '../view/View'
 
-type HTMLNode = Node & { viewDesc: ViewDesc }
+export type HTMLNode = Node & { viewDesc: ViewDesc }
 
 export class ViewDesc {
     protected _el: HTMLNode

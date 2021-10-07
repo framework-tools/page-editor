@@ -1,30 +1,26 @@
 <script>
 import { getContext } from 'svelte';
-import { NodeViewDesc } from '../view/ViewDescription'
 import { element } from '../store'
 
-export let node
-export let parentViewDesc
+export let tree
 
-const item = getContext(node.props.context);
-let currentNode
-
-element.subscribe(updatedItem => currentNode = updatedItem)
-
+$: node = tree.node
+$: item = getContext(node.props.context);
 $: classes = node.classes.join(' ') ?? undefined
 $: selected = node === currentNode
-$: if(parentViewDesc) nodeView = nodeView
-
-let nodeView = new NodeViewDesc(parentViewDesc, [], null, node, parentViewDesc.view)
-
 $: data = item[node.props.key]
+
+let el
+$: if(el) tree.setFragment(el)
+
+let currentNode
+element.subscribe(updatedItem => currentNode = updatedItem)
 
 </script>
 <span
 	class={classes}
 	class:builder-selected={selected}
-	bind:this={nodeView.el}
-	>
+	bind:this={el}>
 	{ data }
 </span>
 <style>

@@ -84,7 +84,7 @@ let doc = Doc.fromJSON(schema, {
 					children: [
 						{
 							type: 'Text',
-							text: 'this is a paragraph'
+							text: 'this is a paragraph<h1>test</h2>'
 						}
 					]
 				},

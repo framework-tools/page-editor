@@ -1,5 +1,5 @@
 
-import type { Node as EditorNode } from '../editor/node'
+import type { Node as EditorNode } from './node'
 
 type PathObject = {
     node: EditorNode,
@@ -40,12 +40,11 @@ export class ResolvedPos {
         let start = 0
         let path: PathObject[] = []
 
-        let node = doc
         let parentOffset = pos
 
-        while(node){
-            let { index, offset } = node.children.findChildIndex(pos)
-            
+        for(let node = doc;;){
+            let { index, offset } = node.children.findChildIndex(parentOffset)
+
             let remaining = parentOffset - offset
 
             path.push({
@@ -57,6 +56,7 @@ export class ResolvedPos {
             if(!remaining) break
 
             node = node.children[index]
+            
             if(node.isText) break
 
             parentOffset = remaining - 1

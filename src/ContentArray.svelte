@@ -1,31 +1,14 @@
 <script>
-	import { tick } from 'svelte'
+	import TextNode from './TextNode.svelte'
 
-	function escapeHtml(unsafe) {
-		return unsafe
-			.replace(/&/g, "&amp;")
-			.replace(/</g, "&lt;")
-			.replace(/>/g, "&gt;")
-			.replace(/"/g, "&quot;")
-			.replace(/'/g, "&#039;");
-	}
-
-	export let parentViewDesc
-
-	async function updateChildren(){
-		await tick()
-		parentViewDesc.updateChildren()
-	}
-
-	$: if(parentViewDesc.el) updateChildren()
+	export let parentTree
 </script>
-{#each parentViewDesc.node.children as node, i}
-	{#if !node.isText }
+{#each parentTree.children as tree}
+	{#if !tree.node.isText }
 		<svelte:component
-			this={node.component}
-			bind:node
-			bind:parentViewDesc/>
+			this={tree.node.component}
+			bind:tree/>
 	{:else}
-		{@html `<!--${i}-->${escapeHtml(node.text)}`}
+		<TextNode bind:tree/>
 	{/if}
 {/each}

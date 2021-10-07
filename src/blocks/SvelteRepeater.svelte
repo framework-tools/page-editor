@@ -1,8 +1,7 @@
 <script>
 import SvelteRepeaterItem from './SvelteRepeaterItem.svelte'
 
-export let node
-export let parentViewDesc
+export let tree
 
 let items = [
     { title: 'first item', author: 'Albert'},
@@ -10,6 +9,6 @@ let items = [
 ]
 
 </script>
-{#each items as item }
-    <SvelteRepeaterItem bind:item bind:node bind:parentViewDesc/>
+{#each items as item, index}
+    <SvelteRepeaterItem bind:item bind:tree index={index}/>
 {/each}

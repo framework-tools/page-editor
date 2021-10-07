@@ -2,10 +2,9 @@
 import ContentArray from './ContentArray.svelte'
 import { tick } from 'svelte'
 import { element } from './store'
-import { NodeViewDesc } from './view/ViewDescription'
 
-export let node
-export let parentViewDesc
+export let tree
+$: node = tree.node
 
 let currentNode
 element.subscribe(updatedItem => currentNode = updatedItem)
@@ -48,11 +47,10 @@ function click(e){
 $: classes = node.classes.join(' ') ?? undefined
 $: empty = node.children.length === 0
 $: selected = node === currentNode
-$: if(parentViewDesc) nodeView = nodeView
 
 let el
 
-let nodeView = new NodeViewDesc(parentViewDesc, [], null, node, parentViewDesc.view)
+$: if(el) tree.setFragment(el)
 
 </script>
 <svelte:element
@@ -60,10 +58,10 @@ let nodeView = new NodeViewDesc(parentViewDesc, [], null, node, parentViewDesc.v
 	class={classes}
 	class:empty
 	class:builder-selected={selected}
-	bind:this={nodeView.el}
+	bind:this={el}
 	>
 	<ContentArray
-		bind:parentViewDesc={nodeView}/>
+		bind:parentTree={tree}/>
 </svelte:element>
 <style>
 	:global(.empty) {

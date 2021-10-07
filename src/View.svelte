@@ -1,30 +1,29 @@
 <script>
-import { NodeViewDesc } from './view/ViewDescription';
 import ContentArray from './ContentArray.svelte'
 import { onMount, onDestroy } from 'svelte'
-import { selectionFromDOM } from './view/Selection';
-import { View } from './view/View';
-import { ResolvedPos } from './view/ResolvedPos'
+import { selectionFromDOM } from './view/selectionUpdate'
+import { NodeTree } from './view/Tree'
 
 export let root
 export let currentNode
 
 
-console.log(ResolvedPos.resolve(root, 18).node().tag)
-
 let rect
 
-let view = new View({
-    rootNode: root
-})
 
-$: if (root) view = view
+let currentTree
+// let view = new View({
+//     rootNode: root
+// })
+
+// $: if (root) view = view
 
 function updateSelection(){
-	let sel = window.getSelection()
-    let offset = selectionFromDOM(view)
+    let sel = selectionFromDOM(el, nodeTree, currentTree)
+    console.log(sel.$anchor)
 }
 
+$: nodeTree = new NodeTree(root)
 
 onMount(()=>{
 	document.addEventListener('selectionchange', updateSelection)
@@ -45,13 +44,16 @@ onDestroy(() => {
 // 	}
 // }
 
+let el
+
+$: if(el) nodeTree.setFragment(el)
 
 </script>
 <div class="content">
     <div class="rect" bind:this={rect}/>
-    <div class="root" bind:this={view.rootEl} contenteditable="true">
+    <div class="root" bind:this={el} contenteditable="true">
         <ContentArray
-            bind:parentViewDesc={view.rootViewDesc}
+            bind:parentTree={nodeTree}
             />
     </div>
 </div>

@@ -60,7 +60,6 @@ export class Node {
     get size () {
         return this.isLeaf ? 1 : 2 + this.children.size
     }
-
 }
 
 export class TextNode extends Node {
